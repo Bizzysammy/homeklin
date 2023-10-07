@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "151814841187",
+    "project_id": "homeklin-1ee7b",
+    "storage_bucket": "homeklin-1ee7b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:151814841187:android:97a5e25d1f473b09c82956",
+        "android_client_info": {
+          "package_name": "com.homeklin.hmeklin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSwmToa_SfLLKxVfeB_R7ZOW8zGB3ZDOE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
