@@ -48,37 +48,18 @@ class _PendingOrdersScreenState extends State<PendingOrdersScreen> {
             itemCount: orders.length,
             itemBuilder: (context, index) {
               final order = orders[index].data();
-              final orderName = orders[index].id;
+
 
               return Container(
                 padding: const EdgeInsets.all(8.0), // Add padding here
                 child: ListTile(
-                  title: FutureBuilder<DocumentSnapshot>(
-                    future: FirebaseFirestore.instance
-                        .collection("Customers")
-                        .doc(userId)
-                        .get(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData && snapshot.data!.exists) {
-                        final data = snapshot.data!.data() as Map<String, dynamic>?; // Explicit cast to Map<String, dynamic>
-                        String? userName = data?['name'] as String?;
-                        return Text(userName ?? "");
-                      } else {
-                        return const Text("Loading...");
-                      }
-                    },
-                  ),
-                  // Display customer name as the main title
-                  subtitle: Column(
+                  title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ListTile(
-                        title: Text(orderName),
-                        // Display order name inside the folder
-                      ),
                       Text('Place: ${order['place']}'),
                       Text('Date: ${order['date']}'),
                       Text('Time: ${order['time']}'),
+                      Text('Paymentmethod: ${order['paymentmethod']}'),
                     ],
                   ),
                   tileColor: Colors.orange, // Set tile color to orange

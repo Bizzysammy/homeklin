@@ -34,6 +34,7 @@ class RejectedOrdersScreen extends StatelessWidget {
                 final place = orderData['place'] as String?;
                 final date = orderData['date'] as String?;
                 final time = orderData['time'] as String?;
+                final paymentmethod = orderData['paymentmethod'] as String?;
 
                 return Container(
                   padding: const EdgeInsets.all(8.0), // Add padding here
@@ -41,10 +42,10 @@ class RejectedOrdersScreen extends StatelessWidget {
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         Text('Place: ${place ?? 'N/A'}'),
                         Text('Date: ${date ?? 'N/A'}'),
                         Text('Time: ${time ?? 'N/A'}'),
+                        Text('paymentmethod: ${paymentmethod ?? 'N/A'}'),
                       ],
                     ),
                     tileColor: Colors.red, // Set tile color to red for rejected orders

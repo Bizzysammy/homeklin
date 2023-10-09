@@ -41,6 +41,7 @@ class OrdersScreen extends StatelessWidget {
                 final place = orderData['place'] as String?;
                 final date = orderData['date'] as String?;
                 final time = orderData['time'] as String?;
+                final paymentmethod = orderData['paymentmethod'] as String?;
                 final verified = orderData['verifiedBy'] as String?;
 
                 return Container(
@@ -54,6 +55,7 @@ class OrdersScreen extends StatelessWidget {
                         Text('Place: ${place ?? 'N/A'}'),
                         Text('Date: ${date ?? 'N/A'}'),
                         Text('Time: ${time ?? 'N/A'}'),
+                        Text('paymentmethod: ${paymentmethod ?? 'N/A'}'),
                         Text('Verified by: ${verified ?? 'N/A'}'),
                       ],
                     ),

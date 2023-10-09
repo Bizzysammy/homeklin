@@ -40,6 +40,7 @@ class RejectOrdersScreen extends StatelessWidget {
                 final place = orderData['place'] as String?;
                 final date = orderData['date'] as String?;
                 final time = orderData['time'] as String?;
+                final paymentmethod = orderData['paymentmethod'] as String?;
                 final rejected = orderData['rejectedBy'] as String?;
 
                 return Container(
@@ -53,6 +54,7 @@ class RejectOrdersScreen extends StatelessWidget {
                         Text('Place: ${place ?? 'N/A'}'),
                         Text('Date: ${date ?? 'N/A'}'),
                         Text('Time: ${time ?? 'N/A'}'),
+                        Text('paymentmethod: ${paymentmethod ?? 'N/A'}'),
                         Text('Rejected by: ${rejected ?? 'N/A'}'),
                       ],
                     ),

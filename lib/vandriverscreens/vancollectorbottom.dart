@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:homeklin/administratorscreens/adminhome/vancollection.dart';
-import 'adminfindroutes.dart';
-import 'adminsendnotification.dart';
-import 'adminviewsentnotifications.dart';
+import 'package:homeklin/vandriverscreens/vannotifications.dart';
+import 'find routes.dart';
+import '../vandriverscreens/vandrivershomescreen.dart';
+import 'vancollectorprofile.dart';
 
-
-class AdminCustomBottomNavigator extends StatefulWidget {
-  const AdminCustomBottomNavigator({super.key});
+class VanCustomBottomNavigator extends StatefulWidget {
+  const VanCustomBottomNavigator({super.key});
 
   @override
-  State<AdminCustomBottomNavigator> createState() => AdminCustomBottomNavigatorState();
+  State<VanCustomBottomNavigator> createState() => _VanCustomBottomNavigatorState();
 }
 
-class AdminCustomBottomNavigatorState extends State<AdminCustomBottomNavigator> {
+class _VanCustomBottomNavigatorState extends State<VanCustomBottomNavigator> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+
       _navigateToScreen(index);
     });
   }
@@ -28,7 +28,7 @@ class AdminCustomBottomNavigatorState extends State<AdminCustomBottomNavigator> 
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const VanCollection(),
+            builder: (context) => const Vandrivershomescreen(),
           ),
         );
         break;
@@ -36,7 +36,7 @@ class AdminCustomBottomNavigatorState extends State<AdminCustomBottomNavigator> 
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const AdminSendNotifications(),
+            builder: (context) => const Vanprofile(),
           ),
         );
         break;
@@ -44,7 +44,7 @@ class AdminCustomBottomNavigatorState extends State<AdminCustomBottomNavigator> 
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const Adminfindroutes(),
+            builder: (context) => const FindRoutes(),
           ),
         );
         break;
@@ -52,7 +52,7 @@ class AdminCustomBottomNavigatorState extends State<AdminCustomBottomNavigator> 
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const AdminsentNotificationScreen(),
+            builder: (context) => const Notifications(),
           ),
         );
         break;
@@ -68,8 +68,8 @@ class AdminCustomBottomNavigatorState extends State<AdminCustomBottomNavigator> 
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.message_outlined),
-          label: 'Send Notification',
+          icon: Icon(Icons.account_circle),
+          label: 'Account',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.location_on),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../screens/logout.dart';
 import '../../vandriverscreens/vancustomerlist.dart';
 
+import '../drivernamereport.dart';
 import 'adminbottom.dart';
 import 'adminrejectedorders.dart';
 import 'adminverifiedorders.dart';
@@ -44,6 +45,21 @@ class _VanCollectionState extends State<VanCollection> {
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>  Drivernamereportscreen()
+                  ));
+            },
+            icon: const Icon(
+              Icons.file_copy,
+              color: Colors.white,
+            ),
+          ),
+        ],
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
