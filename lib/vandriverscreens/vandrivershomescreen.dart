@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:homeklin/screens/logout.dart';
 import 'package:homeklin/vandriverscreens/vancompletedorders.dart';
-import 'package:homeklin/vandriverscreens/vancustomerlist.dart';
+
 import 'package:homeklin/vandriverscreens/vanpendingorders.dart';
-import 'package:homeklin/vandriverscreens/vanrejectedorder.dart';
+
 import 'package:homeklin/vandriverscreens/vancollectorbottom.dart';
 
 import 'addreports.dart';
@@ -113,43 +113,8 @@ class _VandrivershomescreenState extends State<Vandrivershomescreen> {
             SizedBox(height: screenSize.height * 0.07),
           ]),
         ),
+
         Column(children: [
-          //padded elevated button for confirm order
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const VanrejectedOrdersScreen()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.red,
-                shape: const RoundedRectangleBorder(),
-              ),
-              child: const Text('REJECTED ORDERS\t\t\t\t\t\t\t\t\t\t\t\t'),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CustomerListPage()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.purple,
-                shape: const RoundedRectangleBorder(),
-              ),
-              child: const Text('CUSTOMERS\t\t\t\t\t\t'),
-            ),
-          ),
-        ]),
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           //two buttons one for complete and the other for in progress
           Padding(
@@ -158,15 +123,15 @@ class _VandrivershomescreenState extends State<Vandrivershomescreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const VanverifiedOrdersScreen()),
+                  MaterialPageRoute(builder: (context) => const VanpendingOrdersScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.orange,
                 shape: const RoundedRectangleBorder(),
               ),
-              child: const Text('CONFIRMED COLLECTION '),
+              child: const Text('PENDING ORDERS'),
             ),
           ),
 
@@ -176,15 +141,15 @@ class _VandrivershomescreenState extends State<Vandrivershomescreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const VanPendingOrdersScreen()),
+                  MaterialPageRoute(builder: (context) => const vandrivername()),
                 );
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: Colors.orange,
+                backgroundColor: Colors.green,
                 shape: const RoundedRectangleBorder(),
               ),
-              child: const Text('CONFIRM ORDER'),
+              child: const Text('COMPELETED ORDERS '),
             ),
           ),
         ]),
@@ -226,6 +191,8 @@ class _VandrivershomescreenState extends State<Vandrivershomescreen> {
         ),
         ),
       ]),
+    ]
+      ),
     );
   }
 }

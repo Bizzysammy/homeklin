@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:homeklin/vandriverscreens/vancollectorbottom.dart';
+import 'package:homeklin/screens/customerprofilesetting.dart';
 
-import 'vanprofilesetting.dart';
+
+
 
 import 'dart:math';
 
-class Vanprofile extends StatefulWidget {
-  const Vanprofile({Key? key}) : super(key: key);
+import 'package:homeklin/widgets/custom_bottomnav.dart';
+
+class Customerprofile extends StatefulWidget {
+  const Customerprofile({Key? key}) : super(key: key);
 
   static const String id = 'home_screen';
 
   @override
-  State<Vanprofile> createState() => _VanprofileState();
+  State<Customerprofile> createState() => _CustomerprofileState();
 }
 
-class _VanprofileState extends State<Vanprofile> {
+class _CustomerprofileState extends State<Customerprofile> {
   final userId = FirebaseAuth.instance.currentUser!.uid;
   String? imageUrl;
 
@@ -68,7 +71,7 @@ class _VanprofileState extends State<Vanprofile> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const Vanprofilesetting()));
+                      builder: (context) => const Profilesetting()));
             },
             icon: const Icon(
               Icons.settings,
@@ -77,7 +80,7 @@ class _VanprofileState extends State<Vanprofile> {
           ),
         ],
       ),
-      bottomNavigationBar: const VanCustomBottomNavigator(),
+      bottomNavigationBar: const CustomBottomNavigator(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -108,7 +111,7 @@ class _VanprofileState extends State<Vanprofile> {
               ),
               StreamBuilder(
                 stream: FirebaseFirestore.instance
-                    .collection("Van Drivers")
+                    .collection("Customers")
                     .doc(userId)
                     .snapshots(),
                 builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {

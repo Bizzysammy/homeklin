@@ -20,7 +20,7 @@ class AdminverifiedOrdersScreenState extends State<AdminverifiedOrdersScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF213C54),
         title: const Text(
-          'Verified Orders',
+          'Compeleted Orders',
           style: TextStyle(color: Colors.white),
         ),
       ),

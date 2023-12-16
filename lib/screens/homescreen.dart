@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/custom_bottomnav.dart';
-import 'profilesetting.dart';
+import 'customerprofilesetting.dart';
 import 'logout.dart';
 
 class HomeScreen extends StatefulWidget {

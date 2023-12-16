@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:homeklin/screens/bincollection.dart';
 import 'package:homeklin/screens/customerfindingroutes.dart';
+import 'package:homeklin/screens/paystack/customerprofile.dart';
 
-import '../screens/homescreen.dart';
+
 import '../screens/myorders.dart';
 
 
@@ -38,7 +39,7 @@ class _CustomBottomNavigatorState extends State<CustomBottomNavigator> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const HomeScreen (),
+            builder: (context) => const Customerprofile(),
           ),
         );
         break;

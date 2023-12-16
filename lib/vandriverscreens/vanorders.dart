@@ -4,10 +4,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class OrdersScreen extends StatelessWidget {
+class Vanorders extends StatelessWidget {
   final String driverName;
 
-  const OrdersScreen({super.key, required this.driverName});
+  const Vanorders({super.key, required this.driverName});
 
   @override
   Widget build(BuildContext context) {

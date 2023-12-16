@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:homeklin/administratorscreens/adminhome/pendingorders.dart';
 
 import '../../screens/logout.dart';
 import '../../vandriverscreens/vancustomerlist.dart';
@@ -167,7 +168,32 @@ class _VanCollectionState extends State<VanCollection> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const AdminverifiedOrdersScreen(),
+                              builder: (context) => const adminPendingOrdersScreen(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.orange,
+                          shape: const RoundedRectangleBorder(),
+                        ),
+                        child: const Text('PENDING ORDERS'),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Button for confirmed collection
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AdminverifiedOrdersScreen (),
                             ),
                           );
                         },
@@ -176,7 +202,7 @@ class _VanCollectionState extends State<VanCollection> {
                           backgroundColor: Colors.green,
                           shape: const RoundedRectangleBorder(),
                         ),
-                        child: const Text('CONFIRMED COLLECTION'),
+                        child: const Text('COMPLETED COLLECTION'),
                       ),
                     ),
                   ],

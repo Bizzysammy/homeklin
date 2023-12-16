@@ -5,20 +5,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class OrdersScreen extends StatelessWidget {
-  final String driverName;
+  final String customerName;
 
-  const OrdersScreen({super.key, required this.driverName});
+  const OrdersScreen({super.key, required this.customerName});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Orders for $driverName'),
+        title: Text('Completed Orders for $customerName'),
       ),
       body: FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection('completed orders')
-            .where('completedBy', isEqualTo: driverName)
+            .where('name', isEqualTo: customerName)
             .get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -26,7 +26,7 @@ class OrdersScreen extends StatelessWidget {
           } else if (snapshot.hasError) {
             return const Center(child: Text('Error fetching orders data'));
           } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('No verified orders found.'));
+            return const Center(child: Text('No completed orders found.'));
           } else {
             final orders = snapshot.data!.docs;
 

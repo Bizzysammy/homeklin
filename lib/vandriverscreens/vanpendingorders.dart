@@ -1,270 +1,177 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class VanPendingOrdersScreen extends StatefulWidget {
-  const VanPendingOrdersScreen({Key? key}) : super(key: key);
+class VanpendingOrdersScreen extends StatelessWidget {
+  const VanpendingOrdersScreen({Key? key}) : super(key: key);
 
-  @override
-  State<VanPendingOrdersScreen> createState() => _VanPendingOrdersScreenState();
-}
+  Future<void> _openLocationInMaps(String location) async {
+    final url = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$location');
 
-class _VanPendingOrdersScreenState extends State<VanPendingOrdersScreen> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future<void> _completeOrder(String orderId, String vanDriverName) async {
+    final batch = FirebaseFirestore.instance.batch();
+
+    // Retrieve the order document
+    final orderReference =
+    FirebaseFirestore.instance.collection('verified orders').doc(orderId);
+    final orderSnapshot = await orderReference.get();
+
+    if (orderSnapshot.exists) {
+      final orderData = orderSnapshot.data() as Map<String, dynamic>;
+
+      // Add the data to the "completed orders" collection.
+      batch.set(
+        FirebaseFirestore.instance.collection('completed orders').doc(),
+        {
+          ...orderData,
+          'completedBy': vanDriverName,
+        },
+      );
+
+      // Delete the document from the "verified orders" collection.
+      batch.delete(orderReference);
+
+      // Commit the batch operation
+      await batch.commit();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF213C54),
-        title: const Text('Pending Orders',
-            style: TextStyle(color: Colors.white),
+        title: const Text(
+          'Pending Orders',
+          style: TextStyle(color: Colors.white),
         ),
       ),
-      body: StreamBuilder(
-        stream: _firestore.collection('Customers').snapshots(),
-        builder: (context, customersSnapshot) {
-          if (!customersSnapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
+      body: FutureBuilder<QuerySnapshot>(
+        future:
+        FirebaseFirestore.instance.collection('verified orders').get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text('Error fetching customer data'));
+          } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text('No verified orders found.'));
+          } else {
+            final orders = snapshot.data!.docs;
+
+            return ListView.builder(
+              itemCount: orders.length,
+              itemBuilder: (context, index) {
+                final orderData = orders[index].data() as Map<String, dynamic>;
+                final orderId = orders[index].id;
+
+                // Safely access properties with null-aware operators
+                final name = orderData['name'] as String?;
+                final phone = orderData['phonenumber'] as String?;
+                final place = orderData['place'] as String?;
+                final location = orderData['location'] as String?;
+                final paymentmethod = orderData['paymentmethod'] as String?;
+                final date = orderData['date'] as String?;
+                final time = orderData['time'] as String?;
+                final assignedTo = orderData['assignedTo'] as String?;
+
+                return GestureDetector(
+                  onTap: () {
+                    if (location != null) {
+                      _openLocationInMaps(location);
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('name: ${name ?? 'N/A'}'),
+                          Text('Phone: ${phone ?? 'N/A'}'),
+                          Text('Place: ${place ?? 'N/A'}'),
+                          Text('location: ${location ?? 'N/A'}'),
+                          Text('paymentmethod: ${paymentmethod ?? 'N/A'}'),
+                          Text('Date: ${date ?? 'N/A'}'),
+                          Text('Time: ${time ?? 'N/A'}'),
+                          Text('ASSIGNNEDTO: ${assignedTo ?? 'N/A'}'),
+                        ],
+                      ),
+                      tileColor: Colors.green,
+                      trailing: ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Confirm Completion'),
+                              content: const Text(
+                                  'Are you sure you want to complete this order?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    // Get the van driver's name
+                                    final vanDriverName =
+                                    await getVanDriverName();
+
+                                    // Complete the order
+                                    await _completeOrder(
+                                        orderId, vanDriverName);
+
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Complete'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        child: const Text('Complete'),
+                      ),
+                    ),
+                  ),
+                );
+              },
             );
           }
-
-          final customers = customersSnapshot.data!.docs;
-
-          if (customers.isEmpty) {
-            return const Center(
-              child: Text('No customers found.'),
-            );
-          }
-
-          return ListView.builder(
-            itemCount: customers.length,
-            itemBuilder: (context, customerIndex) {
-              final userDoc = customers[customerIndex];
-
-              return StreamBuilder(
-                stream: _firestore
-                    .collection('Customers')
-                    .doc(userDoc.id)
-                    .collection('myorders')
-                    .snapshots(),
-                builder: (context, ordersSnapshot) {
-                  if (!ordersSnapshot.hasData) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-
-                  final orders = ordersSnapshot.data!.docs;
-
-                  if (orders.isEmpty) {
-                    return const Center(
-                      child: Text('No pending orders found.'),
-                    );
-                  }
-
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: orders.length,
-                    itemBuilder: (context, orderIndex) {
-                      final order = orders[orderIndex].data();
-                      final orderName = orders[orderIndex].id;
-
-                      return Container(
-                        padding: const EdgeInsets.all(8.0), // Add padding here
-                        child: ListTile(
-                          // Display customer name as the main title
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ListTile(
-                                title: Text(
-                                    orderName), // Display order name inside the folder
-                              ),
-                              Text('name: ${order['name']}'),
-                              Text('Phone: ${order['phonenumber']}'),
-                              Text('Place: ${order['place']}'),
-                              Text('Date: ${order['date']}'),
-                              Text('Time: ${order['time']}'),
-
-                            ],
-                          ),
-                          tileColor: Colors.orange,
-                          // Set tile color to orange
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  // Display a confirmation dialog before moving the order
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) =>
-                                        AlertDialog(
-                                          title: const Text('Confirm'),
-                                          content: const Text(
-                                              'Are you sure you want to verify this order?'),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text('Cancel'),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                // Handle verify button press
-                                                moveDataToTargetCollectionverified(
-                                                    userDoc);
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text('Verify'),
-                                            ),
-                                          ],
-                                        ),
-                                  );
-                                },
-                                child: const Text('Verify'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  // Display a confirmation dialog before moving the order
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) =>
-                                        AlertDialog(
-                                          title: const Text('Confirm'),
-                                          content: const Text(
-                                              'Are you sure you want to reject this order?'),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text('Cancel'),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                // Handle reject button press
-                                                moveDataToTargetCollectionrejected(
-                                                    userDoc);
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text('Reject'),
-                                            ),
-                                          ],
-                                        ),
-                                  );
-                                },
-                                child: const Text('Reject'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              );
-            },
-          );
         },
       ),
     );
   }
-
-  // Function to move an order to the specified collection and delete it
-  void moveDataToTargetCollectionverified(DocumentSnapshot userDoc) async {
-    final ordersSnapshot = await FirebaseFirestore.instance
-        .collection('Customers')
-        .doc(userDoc.id)
-        .collection('myorders')
-        .get();
-
-    if (ordersSnapshot.docs.isEmpty) {
-      return; // No pending orders found.
-    }
-
-    final batch = FirebaseFirestore.instance.batch();
-
-    for (final orderDoc in ordersSnapshot.docs) {
-      final orderData = orderDoc.data(); // Cast orderData here
-
-      final vanDriverName = await getVanDriverName(); // Implement getVanDriverName()
-
-      // Update the "verifiedBy" field in the order data
-      orderData['verifiedBy'] = vanDriverName;
-
-      // Add the data to the target collection (e.g., "verified orders").
-      batch.set(
-        FirebaseFirestore.instance.collection('verified orders').doc(),
-        orderData,
-      );
-
-      // Delete the document from the source collection ("myorders").
-      batch.delete(orderDoc.reference);
-    }
-
-    await batch.commit();
-  }
-
-  // Function to move an order to the specified collection and delete it
-  void moveDataToTargetCollectionrejected(DocumentSnapshot userDoc) async {
-    final ordersSnapshot = await FirebaseFirestore.instance
-        .collection('Customers')
-        .doc(userDoc.id)
-        .collection('myorders')
-        .get();
-
-    if (ordersSnapshot.docs.isEmpty) {
-      return; // No pending orders found.
-    }
-
-    final batch = FirebaseFirestore.instance.batch();
-
-    for (final orderDoc in ordersSnapshot.docs) {
-      final orderData = orderDoc.data(); // Cast orderData here
-
-      // Retrieve the van driver's name or identifier (replace with your logic)
-      final vanDriverName = await getVanDriverName(); // Implement getVanDriverName()
-
-      // Update the "verifiedBy" field in the order data
-      orderData['rejectedBy'] = vanDriverName;
-
-      // Add the data to the target collection (e.g., "verified orders").
-      batch.set(
-        FirebaseFirestore.instance.collection('rejected orders').doc(),
-        orderData,
-      );
-
-      // Delete the document from the source collection ("myorders").
-      batch.delete(orderDoc.reference);
-    }
-
-    await batch.commit();
-  }
 }
-// Function to retrieve the van driver's name
+
 Future<String> getVanDriverName() async {
   final userId = FirebaseAuth.instance.currentUser!.uid;
 
   try {
     final driverSnapshot = await FirebaseFirestore.instance
         .collection('Van Drivers')
-        .doc(userId) // Assuming the van driver's document ID is the same as their user ID
+        .doc(userId)
         .get();
 
     if (driverSnapshot.exists) {
       final data = driverSnapshot.data() as Map<String, dynamic>;
       final driverName = data['name'] as String?;
-      return driverName ?? ''; // Return the driver's name or an empty string if not found
+      return driverName ?? '';
     } else {
-      return ''; // Return an empty string if the driver's document doesn't exist
+      return '';
     }
   } catch (e) {
     print('Error getting van driver name: $e');
-    return ''; // Return an empty string in case of an error
+    return '';
   }
 }

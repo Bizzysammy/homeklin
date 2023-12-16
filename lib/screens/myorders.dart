@@ -83,7 +83,7 @@ class _MyOrdersState extends State<MyOrders> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const CompletedOrdersScreen()),
+                        MaterialPageRoute(builder: (context) =>  customername()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
